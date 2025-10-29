@@ -1,0 +1,215 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PPP Biblioteca de Casa API",
+    "version": "1.0.0",
+    "description": "API para catalogar livros de prateleiras de casa."
+  },
+  "paths": {
+    "/api/readers/register": {
+      "post": {
+        "summary": "Registrar novo leitor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Leitor registrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Reader" }
+              }
+            }
+          },
+          "400": { "description": "Email já cadastrado ou dados inválidos" }
+        }
+      }
+    },
+    "/api/readers/login": {
+      "post": {
+        "summary": "Login do leitor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Credenciais inválidas" }
+        }
+      }
+    },
+    "/api/books": {
+      "post": {
+        "summary": "Adicionar livro ao catálogo",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Book" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Livro adicionado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Book" }
+              }
+            }
+          },
+          "400": { "description": "Dados inválidos" },
+          "401": { "description": "Token não fornecido" },
+          "403": { "description": "Token inválido" }
+        }
+      },
+      "get": {
+        "summary": "Listar livros do leitor",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de livros",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Book" }
+                }
+              }
+            }
+          },
+          "401": { "description": "Token não fornecido" },
+          "403": { "description": "Token inválido" }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "summary": "Obter detalhes de um livro",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": {
+            "description": "Detalhes do livro",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Book" }
+              }
+            }
+          },
+          "404": { "description": "Livro não encontrado" },
+          "401": { "description": "Token não fornecido" },
+          "403": { "description": "Token inválido" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar livro",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Book" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Livro atualizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Book" }
+              }
+            }
+          },
+          "400": { "description": "Dados inválidos" },
+          "404": { "description": "Livro não encontrado" },
+          "401": { "description": "Token não fornecido" },
+          "403": { "description": "Token inválido" }
+        }
+      },
+      "delete": {
+        "summary": "Remover livro do catálogo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "204": { "description": "Livro removido" },
+          "404": { "description": "Livro não encontrado" },
+          "401": { "description": "Token não fornecido" },
+          "403": { "description": "Token inválido" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Reader": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "email": { "type": "string" }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "readerId": { "type": "integer" },
+          "title": { "type": "string" },
+          "author": { "type": "string" },
+          "coverImage": { "type": "string", "description": "URL da imagem da capa" },
+          "status": { "type": "string", "enum": ["em andamento", "finalizado", "na fila"] },
+          "queue": { "type": "boolean" },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
