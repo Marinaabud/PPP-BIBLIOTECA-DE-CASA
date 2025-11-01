@@ -9,7 +9,7 @@ describe('Login', () => {
                 .set('content-type', 'application/json')
                 .send({
                     'name': 'Marina',
-                    'email': 'euuumariinaaa@biblioteca.com.br',
+                    'email': 'marina@biblioteca.com.br',
                     'password': '102030'
                 });
 
