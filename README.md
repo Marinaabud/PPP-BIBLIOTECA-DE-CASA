@@ -2,6 +2,8 @@
 
 Este projeto tem como objetivo automatizar os testes da API REST do sistema Biblioteca Caseira, que permite o gerenciamento de livros lidos, em andamento e na fila de espera.
 
+![WhatsApp Image 2025-11-04 at 23 47 44](https://github.com/user-attachments/assets/e4c75bbe-5d2b-440b-9de8-d4adef0bdd15)
+
 ## Descrição
 A Biblioteca Caseira é uma solução para organizar e acompanhar suas leituras, registrar livros, avaliações, status e anotações. Os testes garantem que os principais endpoints da API funcionem conforme esperado, validando regras de negócio e autenticação.
 
